@@ -15,13 +15,16 @@ class DatabaseSeeder extends Seeder
         $this->call(ItemSeeder::class);
         $this->call(VendorSeeder::class);
 
-        $dept = Department::query()->where('code', 'IT')->firstOrFail();
+        $deptIt = Department::query()->where('code', 'IT')->firstOrFail();
+        $deptHr = Department::query()->where('code', 'HR')->firstOrFail();
 
+        // Matches dummy SQL + Postman: password for all is "password"
         $users = [
-            ['email' => 'requester@test.local', 'name' => 'Budi Requester', 'role' => 'requester'],
-            ['email' => 'approver@test.local', 'name' => 'Siti Approver', 'role' => 'approver'],
-            ['email' => 'purchasing@test.local', 'name' => 'Dedi Purchasing', 'role' => 'purchasing'],
-            ['email' => 'warehouse@test.local', 'name' => 'Rina Warehouse', 'role' => 'warehouse'],
+            ['email' => 'requester@test.local', 'name' => 'Budi Santoso', 'role' => 'requester', 'department_id' => $deptIt->id],
+            ['email' => 'purchasing@test.local', 'name' => 'Siti Aminah', 'role' => 'purchasing', 'department_id' => $deptIt->id],
+            ['email' => 'approver@test.local', 'name' => 'Dedi Kurniawan', 'role' => 'approver', 'department_id' => $deptIt->id],
+            ['email' => 'requester2@test.local', 'name' => 'Rina Wijaya', 'role' => 'requester', 'department_id' => $deptHr->id],
+            ['email' => 'warehouse@test.local', 'name' => 'Eko Prasetyo', 'role' => 'warehouse', 'department_id' => $deptIt->id],
         ];
 
         foreach ($users as $row) {
@@ -30,7 +33,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => $row['name'],
                     'password' => Hash::make('password'),
-                    'department_id' => $dept->id,
+                    'department_id' => $row['department_id'],
                     'role' => $row['role'],
                 ]
             );

@@ -12,7 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        if (! Schema::hasTable('users')) {
+            Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name', 150);
             $table->string('email')->unique();
@@ -23,27 +24,32 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletesTz();
-        });
+            });
 
-        if (Schema::getConnection()->getDriverName() === 'pgsql') {
-            DB::statement('CREATE INDEX idx_users_department_id ON users (department_id) WHERE deleted_at IS NULL');
-            DB::statement('CREATE INDEX idx_users_role ON users (role) WHERE deleted_at IS NULL');
+            if (Schema::getConnection()->getDriverName() === 'pgsql') {
+                DB::statement('CREATE INDEX idx_users_department_id ON users (department_id) WHERE deleted_at IS NULL');
+                DB::statement('CREATE INDEX idx_users_role ON users (role) WHERE deleted_at IS NULL');
+            }
         }
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
+        if (! Schema::hasTable('password_reset_tokens')) {
+            Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
-        });
+            });
+        }
 
-        Schema::create('sessions', function (Blueprint $table) {
+        if (! Schema::hasTable('sessions')) {
+            Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
-        });
+            });
+        }
     }
 
     /**

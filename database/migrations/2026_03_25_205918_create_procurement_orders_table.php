@@ -9,6 +9,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('procurement_orders')) {
+            return;
+        }
+
         Schema::create('procurement_orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('request_id')->constrained('requests');
